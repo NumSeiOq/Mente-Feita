@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mente Feita — Plataforma Discente IESB</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23990000'/><text x='50%' y='60%' font-size='30' font-weight='900' font-family='Arial, sans-serif' fill='white' text-anchor='middle'>IESB</text></svg>">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    :root {
+      --brand-primary: #0f766e;
+      --brand-primary-dark: #115e59;
+      --brand-primary-light: #14b8a6;
+      --brand-bg-soft: #f0fdfa;
+      --brand-accent: #0284c7;
+      --brand-card-border: #ccfbf1;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --success-color: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--brand-primary-dark) 0%, var(--brand-primary) 100%);
+      color: white;
+      padding: 30px 0;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.15);
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+
+    header h1 {
+      font-size: 1.95rem;
+      margin-bottom: 6px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.92;
+    }
+
+    .intro-banner {
+      background: #ffffff;
+      border-left: 6px solid var(--brand-primary);
+      padding: 22px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+
+    .intro-banner h2 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: var(--brand-primary);
+      font-weight: 700;
+    }
+
+    .intro-banner p {
+      font-size: 0.95rem;
+      color: #334155;
+    }
+
+    .intro-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .intro-tag-item {
+      background: var(--brand-bg-soft);
+      color: var(--brand-primary-dark);
+      border: 1px solid var(--brand-card-border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .share-box {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #25d366;
+      color: white;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-share:hover {
+      background-color: #1ebe5d;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color);
+    }
+
+    .card h2 {
+      color: var(--brand-primary);
+      margin-bottom: 8px;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .calendar-card {
+      background: #ffffff;
+      border: 1px solid var(--brand-card-border);
+      border-top: 4px solid var(--brand-primary);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .calendar-btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--brand-bg-soft);
+      color: var(--brand-primary-dark);
+      border: 1px solid var(--brand-primary-light);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+
+    .calendar-btn-link:hover {
+      background: var(--brand-primary);
+      color: #ffffff;
+    }
+
+    .calendar-timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .timeline-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--brand-primary);
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--brand-primary-dark);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc {
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .pomodoro-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--brand-bg-soft);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--brand-card-border);
+      text-align: center;
+    }
+
+    .pomodoro-timer {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--brand-primary-dark);
+      margin: 10px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pomodoro-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+
+    .btn-primary {
+      background-color: var(--brand-primary);
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { 
+      background-color: var(--brand-primary-dark); 
+    }
+
+    .btn-secondary {
+      background-color: #64748b;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    .btn-edit {
+      color: #0284c7;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    .btn-edit:hover {
+      text-decoration: underline;
+    }
+
+    .btn-danger {
+      background-color: #e11d48;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .btn-danger:hover {
+      background-color: #be123c;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+
+    .resultado-box {
+      margin-top: 15px;
+      padding: 16px;
+      background-color: var(--brand-bg-soft);
+      border-left: 4px solid var(--brand-primary);
+      border-radius: 6px;
+    }
+
+    .hidden { 
+      display: none !important; 
+    }
+
+    .task-input-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .task-list { 
+      list-style: none; 
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .forum-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .lgpd-banner {
+      background: #f0fdf4;
+      border-left: 4px solid var(--success-color);
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      color: #166534;
+    }
+
+    .search-filter-box {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .modal-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 18px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(3px);
+    }
+
+    .mini-modal {
+      background: #ffffff;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      border: 1px solid var(--brand-card-border);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .topic-row {
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .topic-row:hover {
+      border-color: var(--brand-primary-light);
+      background: var(--brand-bg-soft);
+    }
+
+    .topic-row-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .topic-badge {
+      background: var(--brand-bg-soft);
+      color: var(--brand-primary-dark);
+      border: 1px solid var(--brand-card-border);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .topic-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .topico-aberto-card {
+      margin-top: 15px;
+      padding: 18px;
+      background: var(--brand-bg-soft);
+      border-radius: 8px;
+      border-left: 4px solid var(--brand-primary);
+      position: relative;
+    }
+
+    .divider {
+      margin: 20px 0;
+      border: 0;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .reply-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .reply-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .btn-delete-reply {
+      color: #e11d48;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .btn-delete-reply:hover {
+      text-decoration: underline;
+    }
+
+    .reply-form {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .apoio-card ul {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 26px 0;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-conteudo">
+    <header>
+      <div class="container header-content">
+        <span class="header-badge">Instituto de Educação Superior de Brasília</span>
+        <h1>Mente Feita</h1>
+        <p>Gestão de Rotina, Previsão Acadêmica e Apoio Mútuo entre Alunos.</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="intro-banner">
+        <h2>Sobre o Projeto de Extensão</h2>
+        <p>
+          Esta plataforma foi desenvolvida como um <strong>Projeto de Extensão Universitária do Centro Universitário IESB</strong> para apoiar a comunidade discente. O objetivo é combater a sobrecarga acadêmica, diminuir a ansiedade semestral por meio do planejamento preventivo de notas e fortalecer a colaboração mútua entre os alunos em um ambiente harmonioso.
+        </p>
+        <div class="intro-tags">
+          <span class="intro-tag-item">🎓 Projeto de Extensão IESB</span>
+          <span class="intro-tag-item">🌱 ODS 3: Saúde e Bem-Estar</span>
+          <span class="intro-tag-item">📚 ODS 4: Educação de Qualidade</span>
+          <span class="intro-tag-item">🔒 Privacidade & LGPD</span>
+          <span class="intro-tag-item">👥 Colaboração Aberta</span>
+        </div>
+        <div class="share-box">
+          <a href="https://api.whatsapp.com/send?text=Acesse%20a%20plataforma%20Mente%20Feita%20para%20planejamento%20de%20notas%20e%20apoio%20acad%C3%AAmico%20do%20IESB%3A%20https%3A%2F%2Fmente-feita.netlify.app%2F" target="_blank" rel="noopener noreferrer" class="btn-share">
+            📲 Compartilhar com a Turma (WhatsApp)
+          </a>
+        </div>
+      </section>
+
+      <section class="card calendar-card">
+        <div class="calendar-header">
+          <div>
+            <h2>Calendário Acadêmico IESB</h2>
+            <p class="desc" style="margin-bottom: 0;">Acompanhe os principais marcos semestrais e datas oficiais.</p>
+          </div>
+          <a href="https://apps.iesb.br/sistemasAcademicos/calendario" target="_blank" rel="noopener noreferrer" class="calendar-btn-link">
+            📅 Acessar Calendário Completo Oficial ↗
+          </a>
+        </div>
+
+        <div class="calendar-timeline">
+          <div class="timeline-item">
+            <span class="timeline-date">📌 Início do Semestre</span>
+            <span class="timeline-desc">Início oficial das aulas e ambientação acadêmica.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-date">📝 Avaliações P1</span>
+            <span class="timeline-desc">Período de aplicação das primeiras provas e trabalhos.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-date">🎯 Avaliações P2</span>
+            <span class="timeline-desc">Provas decisivas e fechamento da média semestral.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-date">🔄 Prova Substitutiva</span>
+            <span class="timeline-desc">Avaliação substitutiva / P3 para recuperação de menção.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Simulador de Notas e Menções</h2>
+        <p class="desc">Projeção preventiva de desempenho acadêmico em tempo real.</p>
+        
+        <div class="calc-grid">
+          <div class="input-group">
+            <label for="nota-p1">Nota da P1 (0 a 10):</label>
+            <input type="number" id="nota-p1" step="0.1" min="0" max="10" placeholder="Ex: 6.5">
+          </div>
+          <div class="input-group">
+            <label for="nota-p2">Nota da P2 (opcional):</label>
+            <input type="number" id="nota-p2" step="0.1" min="0" max="10" placeholder="Ex: 7.0">
+          </div>
+        </div>
+
+        <button type="button" id="btn-calcular" class="btn-primary">Calcular Situação</button>
+
+        <div id="resultado-calc" class="resultado-box hidden">
+          <h3 style="color: var(--brand-primary); margin-bottom: 6px;">Resultado da Projeção:</h3>
+          <p id="calc-media"></p>
+          <p id="calc-necessario"></p>
+          <p id="calc-mencao"></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Foco nos Estudos (Técnica Pomodoro)</h2>
+        <p class="desc">Ciclos de foco produtivo intercalados com pausas de descanso.</p>
+        <div class="pomodoro-container">
+          <span id="pomodoro-status" style="font-weight: 600; color: var(--brand-primary-dark);">Sessão de Foco</span>
+          <div id="pomodoro-timer" class="pomodoro-timer">25:00</div>
+          <div class="pomodoro-controls">
+            <button type="button" id="btn-pomodoro-start" class="btn-primary">Iniciar</button>
+            <button type="button" id="btn-pomodoro-pause" class="btn-secondary">Pausar</button>
+            <button type="button" id="btn-pomodoro-reset" class="btn-secondary">Reiniciar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Quadro de Rotina Semanal (Armazenamento Privado)</h2>
+        <p class="desc">Suas tarefas ficam gravadas apenas neste dispositivo (privacidade total).</p>
+        <div class="task-input-box">
+          <input type="text" id="nova-tarefa" placeholder="Digite uma entrega ou prazo de matéria...">
+          <button type="button" id="btn-add-tarefa" class="btn-secondary">Adicionar</button>
+        </div>
+        <ul id="lista-tarefas" class="task-list"></ul>
+      </section>
+
+      <section class="card forum-main">
+        <div class="forum-header-bar">
+          <h2>Fórum de Debate e Apoio Mútuo</h2>
+          <button type="button" id="btn-abrir-novo-topico" class="btn-primary btn-sm">+ Criar Novo Tópico</button>
+        </div>
+
+        <div class="lgpd-banner">
+          <small><strong>Aviso de Privacidade e LGPD:</strong> Não divulgue dados pessoais sensíveis (CPF, matrícula, telefone). Ambiente colaborativo gerido por alunos do IESB.</small>
+        </div>
+
+        <div class="search-filter-box">
+          <input type="text" id="input-pesquisa" placeholder="Pesquise por matéria ou assunto...">
+          <select id="filtro-categoria">
+            <option value="TODAS">Todas as Categorias</option>
+            <option value="Dúvidas de Matérias">Dúvidas de Matérias</option>
+            <option value="Compartilhamento de Resumos">Compartilhamento de Resumos</option>
+            <option value="Dicas de Organização">Dicas de Organização</option>
+            <option value="Apoio Geral & Desabafos">Apoio Geral & Desabafos</option>
+          </select>
+        </div>
+
+        <div id="modal-topico" class="modal-box hidden">
+          <h3 style="color: var(--brand-primary); margin-bottom: 10px;">Criar Nova Discussão</h3>
+          <form id="form-novo-topico">
+            <input type="text" id="topico-titulo" placeholder="Título do Tópico (Ex: Dúvida sobre Mobilidade Social)" required>
+            <div class="calc-grid">
+              <input type="text" id="topico-autor" placeholder="Seu Nome / Apelido" required>
+              <select id="topico-categoria" required>
+                <option value="Dúvidas de Matérias">Dúvidas de Matérias</option>
+                <option value="Compartilhamento de Resumos">Compartilhamento de Resumos</option>
+                <option value="Dicas de Organização">Dicas de Organização</option>
+                <option value="Apoio Geral & Desabafos">Apoio Geral & Desabafos</option>
+              </select>
+            </div>
+            <textarea id="topico-conteudo" rows="4" placeholder="Descreva sua dúvida ou contexto..." required></textarea>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Publicar Tópico</button>
+              <button type="button" id="btn-fechar-modal" class="btn-secondary">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="container-lista-topicos">
+          <p class="loading" style="color: var(--text-muted);">Carregando tópicos da comunidade discente...</p>
+        </div>
+
+        <div id="container-detalhe-topico" class="hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <button type="button" id="btn-voltar-topicos" class="btn-secondary btn-sm">← Voltar para Todos os Tópicos</button>
+            <div>
+              <button type="button" id="btn-editar-topico-aberto" class="btn-primary btn-sm hidden">✏️ Editar Meu Tópico</button>
+              <button type="button" id="btn-excluir-topico" class="btn-danger btn-sm">🗑 Excluir Tópico (Admin)</button>
+            </div>
+          </div>
+          
+          <div id="conteudo-topico-aberto" class="topico-aberto-card"></div>
+          <hr class="divider">
+          <h4 style="color: var(--brand-primary); margin-bottom: 10px;">Respostas da Comunidade</h4>
+          <div id="lista-respostas-topico" class="respostas-box"></div>
+
+          <form id="form-responder-topico" class="reply-form">
+            <input type="text" id="resp-autor" placeholder="Seu Nome / Apelido" required>
+            <textarea id="resp-conteudo" rows="3" placeholder="Escreva sua resposta acolhedora..." required></textarea>
+            <button type="submit" class="btn-primary btn-sm">Enviar Resposta</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card apoio-card">
+        <h2>Canais de Apoio e Saúde Mental (DF & IESB)</h2>
+        <p>Suporte especializado institucional e serviços públicos no DF:</p>
+        <ul>
+          <li><strong>Clínica-Escola de Psicologia IESB:</strong> Atendimento psicológico supervisionado (Campus Asa Sul e Ceilândia)</li>
+          <li><strong>CVV (Centro de Valorização da Vida):</strong> Ligue 188 (24h gratuito)</li>
+          <li><strong>CAPS II Asa Sul:</strong> EQS 314/315 — Telefone: (61) 3245-1282</li>
+          <li><strong>SAMU:</strong> Ligue 192</li>
+        </ul>
+      </section>
+    </main>
+
+    <div id="modal-edicao" class="modal-overlay hidden">
+      <div class="mini-modal">
+        <h3 style="color: var(--brand-primary); margin-bottom: 12px;">Editar Conteúdo</h3>
+        <textarea id="texto-edicao" rows="6"></textarea>
+        <div class="form-actions" style="margin-top: 10px; justify-content: flex-end;">
+          <button type="button" id="btn-cancelar-edicao" class="btn-secondary">Cancelar</button>
+          <button type="button" id="btn-salvar-edicao" class="btn-primary">Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="container">
+        <p>Mente Feita — Projeto de Extensão Discente (IESB) | Em conformidade com a LGPD</p>
+        <p>© 2026 Jarvas. Todos os direitos reservados (ou não).</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const SENHA_ADMIN_MODERACAO = "turmafonte*%";
+
+      const SUPABASE_URL = "https://iwfjoyflxadgysnhyupu.supabase.co";
+      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZmpveWZseGFkZ3lzbmh5dXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0Mjk2OTEsImV4cCI6MjEwNTAwNTY5MX0.sM9u3aljPEIHmL7lyHV_-LPLVFQilMJfect-a_2tdzQ";
+      
+      let supabase = null;
+      if (window.supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+
+      let itemEditando = null;
+
+      const modalEdicao = document.getElementById("modal-edicao");
+      const textoEdicao = document.getElementById("texto-edicao");
+      const btnSalvarEdicao = document.getElementById("btn-salvar-edicao");
+      const btnCancelarEdicao = document.getElementById("btn-cancelar-edicao");
+
+      function abrirMiniJanelaEdicao(tipo, id, conteudoInicial) {
+        itemEditando = { tipo, id };
+        textoEdicao.value = conteudoInicial;
+        modalEdicao.classList.remove("hidden");
+      }
+
+      function fecharMiniJanelaEdicao() {
+        modalEdicao.classList.add("hidden");
+        itemEditando = null;
+        textoEdicao.value = "";
+      }
+
+      btnCancelarEdicao.addEventListener("click", fecharMiniJanelaEdicao);
+
+      btnSalvarEdicao.addEventListener("click", async () => {
+        if (!itemEditando) return;
+        const novoTexto = textoEdicao.value.trim();
+        if (!novoTexto) return;
+
+        try {
+          if (itemEditando.tipo === "topico") {
+            const { error } = await supabase
+              .from("topics")
+              .update({ conteudo: novoTexto })
+              .eq("id", itemEditando.id);
+            if (error) throw error;
+            const t = topicosCarregados.find(item => item.id === itemEditando.id);
+            if (t) t.conteudo = novoTexto;
+            abrirTopico(itemEditando.id);
+          } else if (itemEditando.tipo === "resposta") {
+            const { error } = await supabase
+              .from("topic_replies")
+              .update({ conteudo: novoTexto })
+              .eq("id", itemEditando.id);
+            if (error) throw error;
+            await carregarRespostas(topicoAtivoId);
+          }
+          fecharMiniJanelaEdicao();
+        } catch (err) {
+          alert("Erro ao salvar alterações: " + err.message);
+        }
+      });
+
+      function obterMeusTopicos() {
+        try {
+          return JSON.parse(localStorage.getItem("meus_topicos_ids") || "[]");
+        } catch { return []; }
+      }
+      function salvarMeuTopico(id) {
+        const ids = obterMeusTopicos();
+        if (!ids.includes(id)) {
+          ids.push(id);
+          localStorage.setItem("meus_topicos_ids", JSON.stringify(ids));
+        }
+      }
+
+      function obterMinhasRespostas() {
+        try {
+          return JSON.parse(localStorage.getItem("minhas_respostas_ids") || "[]");
+        } catch { return []; }
+      }
+      function salvarMinhaResposta(id) {
+        const ids = obterMinhasRespostas();
+        if (!ids.includes(id)) {
+          ids.push(id);
+          localStorage.setItem("minhas_respostas_ids", JSON.stringify(ids));
+        }
+      }
+
+      const inputP1 = document.getElementById("nota-p1");
+      const inputP2 = document.getElementById("nota-p2");
+      const btnCalcular = document.getElementById("btn-calcular");
+      const resultadoCalc = document.getElementById("resultado-calc");
+      const calcMedia = document.getElementById("calc-media");
+      const calcNecessario = document.getElementById("calc-necessario");
+      const calcMencao = document.getElementById("calc-mencao");
+
+      function calcularMencoes() {
+        const p1Val = inputP1.value.trim();
+        const p2Val = inputP2.value.trim();
+
+        if (p1Val === "" && p2Val === "") {
+          resultadoCalc.classList.add("hidden");
+          return;
+        }
+
+        const p1 = p1Val !== "" ? parseFloat(p1Val) : null;
+        const p2 = p2Val !== "" ? parseFloat(p2Val) : null;
+
+        resultadoCalc.classList.remove("hidden");
+
+        if (p1 !== null && p2 === null) {
+          if (p1 < 0 || p1 > 10) {
+            calcMedia.innerHTML = "<span style='color:#e11d48;'>Insira uma nota entre 0 e 10.</span>";
+            calcNecessario.innerHTML = "";
+            calcMencao.innerHTML = "";
+            return;
+          }
+          const precisaMM = (10 - p1).toFixed(1);
+          const precisaMS = (14 - p1).toFixed(1);
+          const precisaSS = (18 - p1).toFixed(1);
+
+          calcMedia.innerHTML = `Nota informada (P1): <strong>${p1.toFixed(1)}</strong>`;
+          calcNecessario.innerHTML = `
+            <strong>Metas para a P2:</strong><br>
+            • Para <strong>MM</strong> (Média 5.0 - Aprovado): precisa de <strong>${precisaMM <= 0 ? "0.0 (Aprovado)" : precisaMM > 10 ? "Nota > 10 (Necessário Substitutiva)" : precisaMM}</strong><br>
+            • Para <strong>MS</strong> (Média 7.0): precisa de <strong>${precisaMS <= 0 ? "0.0" : precisaMS > 10 ? "Inatingível direto" : precisaMS}</strong><br>
+            • Para <strong>SS</strong> (Média 9.0): precisa de <strong>${precisaSS <= 0 ? "0.0" : precisaSS > 10 ? "Inatingível direto" : precisaSS}</strong>
+          `;
+          calcMencao.innerHTML = "<small style='color:#64748b;'>Simulação preventiva de estudos.</small>";
+          return;
+        }
+
+        if (p1 === null && p2 !== null) {
+          if (p2 < 0 || p2 > 10) {
+            calcMedia.innerHTML = "<span style='color:#e11d48;'>Insira uma nota entre 0 e 10.</span>";
+            calcNecessario.innerHTML = "";
+            calcMencao.innerHTML = "";
+            return;
+          }
+          const precisaMM = (10 - p2).toFixed(1);
+          calcMedia.innerHTML = `Nota informada (P2): <strong>${p2.toFixed(1)}</strong>`;
+          calcNecessario.innerHTML = `• Para aprovação direta (MM), a nota necessária na P1 era de <strong>${precisaMM <= 0 ? "0.0" : precisaMM}</strong>.`;
+          calcMencao.innerHTML = "";
+          return;
+        }
+
+        if (p1 !== null && p2 !== null) {
+          if (p1 < 0 || p1 > 10 || p2 < 0 || p2 > 10) {
+            calcMedia.innerHTML = "<span style='color:#e11d48;'>As notas devem estar entre 0 e 10.</span>";
+            calcNecessario.innerHTML = "";
+            calcMencao.innerHTML = "";
+            return;
+          }
+          const media = (p1 + p2) / 2;
+          calcMedia.innerHTML = `Média final: <strong>${media.toFixed(1)}</strong>`;
+
+          let mencao = "";
+          let desc = "";
+          if (media >= 9.0) { mencao = "SS (Superior)"; desc = "Excelente desempenho! Aprovado com louvor."; }
+          else if (media >= 7.0) { mencao = "MS (Médio Superior)"; desc = "Bom domínio! Aprovado com folga."; }
+          else if (media >= 5.0) { mencao = "MM (Médio)"; desc = "Atingiu a nota mínima para aprovação."; }
+          else if (media >= 3.0) { mencao = "MI (Médio Inferior)"; desc = "Necessário realizar Prova Substitutiva / P3."; }
+          else if (media > 0.0) { mencao = "II (Inferior)"; desc = "Rendimento insuficiente."; }
+          else { mencao = "SR (Sem Rendimento)"; desc = "Sem rendimento computado."; }
+
+          calcMencao.innerHTML = `Menção Estimada: <strong style="color:${media >= 5 ? '#059669' : '#e11d48'}; font-size:1.1rem;">${mencao}</strong>`;
+          calcNecessario.innerHTML = `<p>${desc}</p>`;
+        }
+      }
+
+      inputP1.addEventListener("input", calcularMencoes);
+      inputP2.addEventListener("input", calcularMencoes);
+      btnCalcular.addEventListener("click", calcularMencoes);
+
+      let pomodoroSeconds = 1500;
+      let pomodoroInterval = null;
+      let isBreak = false;
+
+      const timerDisplay = document.getElementById("pomodoro-timer");
+      const statusDisplay = document.getElementById("pomodoro-status");
+      const btnStart = document.getElementById("btn-pomodoro-start");
+      const btnPause = document.getElementById("btn-pomodoro-pause");
+      const btnReset = document.getElementById("btn-pomodoro-reset");
+
+      function updateTimerDisplay() {
+        const mins = Math.floor(pomodoroSeconds / 60);
+        const secs = pomodoroSeconds % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      btnStart.addEventListener("click", () => {
+        if (pomodoroInterval) return;
+        pomodoroInterval = setInterval(() => {
+          if (pomodoroSeconds > 0) {
+            pomodoroSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(pomodoroInterval);
+            pomodoroInterval = null;
+            if (!isBreak) {
+              isBreak = true;
+              pomodoroSeconds = 300;
+              statusDisplay.textContent = "Pausa para Descanso (5 min)";
+              alert("Tempo de foco concluído! Faça uma pausa de 5 minutos.");
+            } else {
+              isBreak = false;
+              pomodoroSeconds = 1500;
+              statusDisplay.textContent = "Sessão de Foco (25 min)";
+              alert("Pausa finalizada! Pronto para o próximo ciclo de foco?");
+            }
+            updateTimerDisplay();
+          }
+        }, 1000);
+      });
+
+      btnPause.addEventListener("click", () => {
+        clearInterval(pomodoroInterval);
+        pomodoroInterval = null;
+      });
+
+      btnReset.addEventListener("click", () => {
+        clearInterval(pomodoroInterval);
+        pomodoroInterval = null;
+        isBreak = false;
+        pomodoroSeconds = 1500;
+        statusDisplay.textContent = "Sessão de Foco";
+        updateTimerDisplay();
+      });
+
+      const btnAddTarefa = document.getElementById("btn-add-tarefa");
+      const inputTarefa = document.getElementById("nova-tarefa");
+      const listaTarefas = document.getElementById("lista-tarefas");
+
+      let tarefas = [];
+      try {
+        tarefas = JSON.parse(localStorage.getItem("tarefas_mente_feita") || "[]");
+      } catch (e) {
+        tarefas = [];
+      }
+
+      function renderTarefas() {
+        listaTarefas.innerHTML = "";
+        tarefas.forEach((t, i) => {
+          const li = document.createElement("li");
+          li.className = "task-item";
+          li.innerHTML = `
+            <span>${t}</span>
+            <button type="button" onclick="concluirTarefa(${i})" style="color:var(--brand-primary); border:none; background:none; cursor:pointer; font-weight:bold;">✕ Concluir</button>
+          `;
+          listaTarefas.appendChild(li);
+        });
+      }
+
+      btnAddTarefa.addEventListener("click", () => {
+        const txt = inputTarefa.value.trim();
+        if (txt) {
+          tarefas.push(txt);
+          localStorage.setItem("tarefas_mente_feita", JSON.stringify(tarefas));
+          inputTarefa.value = "";
+          renderTarefas();
+        }
+      });
+
+      window.concluirTarefa = (idx) => {
+        tarefas.splice(idx, 1);
+        localStorage.setItem("tarefas_mente_feita", JSON.stringify(tarefas));
+        renderTarefas();
+      };
+
+      renderTarefas();
+
+      let topicosCarregados = [];
+      let topicoAtivoId = null;
+
+      const containerLista = document.getElementById("container-lista-topicos");
+      const containerDetalhe = document.getElementById("container-detalhe-topico");
+      const conteudoTopicoAberto = document.getElementById("conteudo-topico-aberto");
+      const listaRespostas = document.getElementById("lista-respostas-topico");
+      const modalTopico = document.getElementById("modal-topico");
+      const btnAbrirModal = document.getElementById("btn-abrir-novo-topico");
+      const btnFecharModal = document.getElementById("btn-fechar-modal");
+      const btnVoltar = document.getElementById("btn-voltar-topicos");
+      const btnExcluirTopico = document.getElementById("btn-excluir-topico");
+      const btnEditarTopicoAberto = document.getElementById("btn-editar-topico-aberto");
+      const formNovoTopico = document.getElementById("form-novo-topico");
+      const formResp = document.getElementById("form-responder-topico");
+      const inputPesquisa = document.getElementById("input-pesquisa");
+      const filtroCategoria = document.getElementById("filtro-categoria");
+
+      btnAbrirModal.addEventListener("click", () => modalTopico.classList.toggle("hidden"));
+      btnFecharModal.addEventListener("click", () => modalTopico.classList.add("hidden"));
+
+      btnVoltar.addEventListener("click", () => {
+        containerDetalhe.classList.add("hidden");
+        containerLista.classList.remove("hidden");
+        topicoAtivoId = null;
+        carregarTopicos();
+      });
+
+      btnEditarTopicoAberto.addEventListener("click", () => {
+        if (!topicoAtivoId) return;
+        const t = topicosCarregados.find(item => item.id === topicoAtivoId);
+        if (!t) return;
+
+        abrirMiniJanelaEdicao("topico", topicoAtivoId, t.conteudo);
+      });
+
+      window.editarResposta = function(replyId, textoAtual) {
+        abrirMiniJanelaEdicao("resposta", replyId, textoAtual);
+      };
+
+      btnExcluirTopico.addEventListener("click", async () => {
+        if (!topicoAtivoId) return;
+
+        const tentativaSenha = prompt("Ação de Moderação: Digite a senha de administrador para excluir este tópico:");
+        if (tentativaSenha !== SENHA_ADMIN_MODERACAO) {
+          alert("Senha de administrador incorreta. Operação cancelada.");
+          return;
+        }
+
+        if (!confirm("Tem certeza de que deseja excluir permanentemente este tópico e todas as suas respostas?")) {
+          return;
+        }
+
+        try {
+          const { error } = await supabase
+            .from("topics")
+            .delete()
+            .eq("id", topicoAtivoId);
+
+          if (error) throw error;
+
+          alert("Tópico excluído com sucesso!");
+          containerDetalhe.classList.add("hidden");
+          containerLista.classList.remove("hidden");
+          topicoAtivoId = null;
+          await carregarTopicos();
+        } catch (err) {
+          alert("Erro ao excluir tópico: " + err.message);
+        }
+      });
+
+      window.excluirResposta = async function(replyId) {
+        const tentativaSenha = prompt("Ação de Moderação: Digite a senha de administrador para excluir esta resposta:");
+        if (tentativaSenha !== SENHA_ADMIN_MODERACAO) {
+          alert("Senha de administrador incorreta. Operação cancelada.");
+          return;
+        }
+
+        try {
+          const { error } = await supabase
+            .from("topic_replies")
+            .delete()
+            .eq("id", replyId);
+
+          if (error) throw error;
+
+          await carregarRespostas(topicoAtivoId);
+        } catch (err) {
+          alert("Erro ao excluir resposta: " + err.message);
+        }
+      };
+
+      async function carregarTopicos() {
+        if (!supabase) {
+          containerLista.innerHTML = "<p style='color:#e11d48;'>Supabase não conectado.</p>";
+          return;
+        }
+
+        try {
+          const { data, error } = await supabase
+            .from("topics")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+          if (error) throw error;
+          topicosCarregados = data || [];
+          renderizarTopicos();
+        } catch (err) {
+          containerLista.innerHTML = `<p style='color:#e11d48;'>Erro ao carregar fórum: ${err.message}</p>`;
+        }
+      }
+
+      function renderizarTopicos() {
+        const termo = inputPesquisa.value.toLowerCase();
+        const cat = filtroCategoria.value;
+
+        const filtrados = topicosCarregados.filter(t => {
+          const matchTxt = (t.titulo && t.titulo.toLowerCase().includes(termo)) || 
+                           (t.conteudo && t.conteudo.toLowerCase().includes(termo));
+          const matchCat = cat === "TODAS" || t.categoria === cat;
+          return matchTxt && matchCat;
+        });
+
+        if (filtrados.length === 0) {
+          containerLista.innerHTML = "<p style='color:#64748b; padding:10px 0;'>Nenhum tópico encontrado. Seja o primeiro a criar!</p>";
+          return;
+        }
+
+        containerLista.innerHTML = filtrados.map(t => `
+          <div class="topic-row" onclick="abrirTopico(${t.id})">
+            <div class="topic-row-header">
+              <span class="topic-badge">${t.categoria}</span>
+              <span class="topic-meta">${new Date(t.created_at).toLocaleDateString("pt-BR")}</span>
+            </div>
+            <h3 style="color:var(--brand-primary); font-size:1.1rem; margin-bottom:4px;">${t.titulo}</h3>
+            <p style="font-size:0.9rem; color:#475569;">${t.conteudo ? t.conteudo.substring(0, 120) : ''}...</p>
+            <small style="color:#64748b;">Autor: <strong>${t.autor}</strong> (Clique para abrir)</small>
+          </div>
+        `).join("");
+      }
+
+      inputPesquisa.addEventListener("input", renderizarTopicos);
+      filtroCategoria.addEventListener("change", renderizarTopicos);
+
+      formNovoTopico.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const titulo = document.getElementById("topico-titulo").value.trim();
+        const autor = document.getElementById("topico-autor").value.trim();
+        const categoria = document.getElementById("topico-categoria").value;
+        const conteudo = document.getElementById("topico-conteudo").value.trim();
+
+        try {
+          const { data, error } = await supabase
+            .from("topics")
+            .insert([{ titulo, autor, categoria, conteudo }])
+            .select();
+
+          if (error) throw error;
+          
+          if (data && data[0]) {
+            salvarMeuTopico(data[0].id);
+          }
+
+          modalTopico.classList.add("hidden");
+          formNovoTopico.reset();
+          await carregarTopicos();
+        } catch (err) {
+          alert("Erro ao criar tópico: " + err.message);
+        }
+      });
+
+      window.abrirTopico = async (id) => {
+        topicoAtivoId = id;
+        const t = topicosCarregados.find(item => item.id === id);
+        if (!t) return;
+
+        containerLista.classList.add("hidden");
+        containerDetalhe.classList.remove("hidden");
+
+        const meusTopicos = obterMeusTopicos();
+        if (meusTopicos.includes(id)) {
+          btnEditarTopicoAberto.classList.remove("hidden");
+        } else {
+          btnEditarTopicoAberto.classList.add("hidden");
+        }
+
+        conteudoTopicoAberto.innerHTML = `
+          <span class="topic-badge">${t.categoria}</span>
+          <h2 style="margin-top:8px; color:var(--brand-primary);">${t.titulo}</h2>
+          <p style="margin: 10px 0; font-size:1rem; white-space: pre-line;">${t.conteudo}</p>
+          <small style="color:#64748b;">Postado por <strong>${t.autor}</strong> em ${new Date(t.created_at).toLocaleString("pt-BR")}</small>
+        `;
+
+        await carregarRespostas(id);
+      };
+
+      async function carregarRespostas(id) {
+        listaRespostas.innerHTML = "<p>Carregando respostas...</p>";
+        try {
+          const { data, error } = await supabase
+            .from("topic_replies")
+            .select("*")
+            .eq("topic_id", id)
+            .order("created_at", { ascending: true });
+
+          if (error) throw error;
+          if (!data || data.length === 0) {
+            listaRespostas.innerHTML = "<p style='color:#64748b; font-style:italic;'>Nenhuma resposta ainda. Escreva a primeira abaixo!</p>";
+            return;
+          }
+
+          const minhasRespostas = obterMinhasRespostas();
+
+          listaRespostas.innerHTML = data.map(r => {
+            const eMinha = minhasRespostas.includes(r.id);
+            const conteudoEscapado = r.conteudo.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+            return `
+              <div class="reply-card">
+                <div class="reply-header">
+                  <span><strong>${r.autor}</strong> em ${new Date(r.created_at).toLocaleString("pt-BR")}:</span>
+                  <div>
+                    ${eMinha ? `<button type="button" class="btn-edit" onclick="editarResposta(${r.id}, '${conteudoEscapado}')">✏️ Editar</button>` : ''}
+                    <button type="button" class="btn-delete-reply" onclick="excluirResposta(${r.id})">✕ Excluir</button>
+                  </div>
+                </div>
+                <p style="white-space: pre-line;">${r.conteudo}</p>
+              </div>
+            `;
+          }).join("");
+        } catch (err) {
+          listaRespostas.innerHTML = `<p style='color:#e11d48;'>Erro ao carregar respostas: ${err.message}</p>`;
+        }
+      }
+
+      formResp.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!topicoAtivoId) return;
+
+        const autor = document.getElementById("resp-autor").value.trim();
+        const conteudo = document.getElementById("resp-conteudo").value.trim();
+
+        try {
+          const { data, error } = await supabase
+            .from("topic_replies")
+            .insert([{ topic_id: topicoAtivoId, autor, conteudo }])
+            .select();
+
+          if (error) throw error;
+
+          if (data && data[0]) {
+            salvarMinhaResposta(data[0].id);
+          }
+
+          document.getElementById("resp-conteudo").value = "";
+          await carregarRespostas(topicoAtivoId);
+        } catch (err) {
+          alert("Erro ao enviar resposta: " + err.message);
+        }
+      });
+
+      carregarTopicos();
+    });
+  </script>
+</body>
+</html>
